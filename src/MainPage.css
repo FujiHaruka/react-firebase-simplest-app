@@ -1,0 +1,9 @@
+.MainPage-input {
+  display: inline-block;
+  width: 15em;
+  height: 1.5em;
+}
+
+.MainPage-uid {
+  padding: 1em 0;
+}
