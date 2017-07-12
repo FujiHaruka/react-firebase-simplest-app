@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import MainPage from './MainPage'
+import { firebaseDb } from './firebase'
 import './App.css'
 
 class App extends Component {
@@ -37,6 +38,15 @@ class App extends Component {
   async handleInputChange (e) {
     let text = e.target.value
     this.setState({ text })
+    await firebaseDb.ref(`/myText`).set({ text })
+  }
+
+  async componentDidMount () {
+    let snapshot = await firebaseDb.ref(`/myText`).once('value')
+    let { text } = snapshot.val() || ''
+    this.setState({
+      text
+    })
   }
 }
 
