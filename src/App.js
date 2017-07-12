@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import MainPage from './MainPage'
-import { firebaseDb } from './firebase'
+import SignIn from './SignIn'
+import { firebaseDb, firebaseAuth } from './firebase'
 import './App.css'
 
 class App extends Component {
@@ -11,42 +12,60 @@ class App extends Component {
     this.state = {
       text: '',
       auth: false,
-      user: null
+      uid: null
     }
   }
 
   render () {
     let {
       text,
+      auth
     } = this.state
-    console.log(text)
     return (
       <div className='App'>
         <div className='App-header'>
           <h2 className='App-title'>React and Firebase Simplest App</h2>
         </div>
         <div className='App-main'>
-          <MainPage
-            handleInputChange={this.handleInputChange}
-            inputValue={text}
-          />
+          {
+            auth
+            ? <MainPage
+              handleInputChange={this.handleInputChange}
+              inputValue={text}
+              />
+            : <SignIn
+              signInAnonymously={this.signInAnonymously}
+              />
+          }
         </div>
       </div>
     )
   }
 
   async handleInputChange (e) {
+    let { auth, uid } = this.state
+    if (!auth) {
+      throw new Error('Not sign in')
+    }
     let text = e.target.value
     this.setState({ text })
-    await firebaseDb.ref(`/myText`).set({ text })
+    await firebaseDb.ref(`/texts/${uid}`).set({ text })
   }
 
-  async componentDidMount () {
-    let snapshot = await firebaseDb.ref(`/myText`).once('value')
-    let { text } = snapshot.val() || ''
-    this.setState({
-      text
-    })
+  async signInAnonymously () {
+    try {
+      let result = await firebaseAuth.signInAnonymously()
+      let { uid } = result
+      let snapshot = await firebaseDb.ref(`/texts/${uid}`).once('value')
+      let { text } = snapshot.val() || ''
+      this.setState({
+        auth: true,
+        uid,
+        text
+      })
+    } catch (e) {
+      console.log(e.message)
+    }
   }
 }
 
