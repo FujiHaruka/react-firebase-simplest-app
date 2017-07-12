@@ -1,0 +1,22 @@
+.SignIn-wrap {
+  width: 300px;
+  padding: 20px;
+}
+
+.SignIn-title {
+  font-weight: 100;
+  color: #2a77b4;
+}
+
+.SignIn-button {
+  display: inline-block;
+  width: 100%;
+  font-size: 1.2em;
+  height: 2.4em;
+  padding: 0.7em;
+  margin: 18px;
+  background: #2a77b4;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
